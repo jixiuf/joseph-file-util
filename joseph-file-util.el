@@ -102,7 +102,7 @@ if `include-regexp' is nil ,return all. "
 ;;;###autoload
 (defun joseph-all-subdirs-under-dir-without-borring-dirs(dir)
   "return all sub directories under `dir' exclude those borring directory."
-  (joseph-all-subdirs-cyclely dir "\\.git\\|\\.svn\\|RCS\\|rcs\\|CVS\\|cvs"))
+  (joseph-all-subdirs-under-dir-recursively dir "\\.git\\|\\.svn\\|RCS\\|rcs\\|CVS\\|cvs"))
 
 
 ;; for example :
