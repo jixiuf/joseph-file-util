@@ -7,7 +7,8 @@
 ;; Copyright (C) 2011~, Joseph, all rights reserved.
 ;; Created: 2011-03-31
 ;; Version: 0.1.0
-;; URL:http://www.emacswiki.org/emacs/download/joseph-file-util.el
+;; URL:  http://www.emacswiki.org/emacs/download/joseph-file-util.el
+;; Main Page: https://github.com/jixiuf/joseph-file-util
 ;; Keywords:  file directory
 ;; Compatibility: (Test on GNU Emacs 24.0.50.1)
 ;;
