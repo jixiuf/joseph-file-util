@@ -54,26 +54,24 @@
 ;; (joseph-all-files-under-dir-recursively "~")
 ;;  get all files under home recursively
 ;;
-;;;###autoload
-(defun joseph-all-files-under-dir-recursively(dir &optional include-regexp)
-  "return all files matched `include-regexp' under directory `dir' recursively.
-if `include-regexp' is nil ,return all. "
-  (let((files (list dir))  matched-dirs head)
-    (while (> (length files) 0)
-      (setq head (pop files))
-      (when (file-readable-p head)
-        (if (file-directory-p head)
-            (dolist (sub (directory-files head))
-              (when (not (string-match "^\\.$\\|^\\.\\.$" sub))
-                (setq files (append (list (expand-file-name sub head)) files))))
-          (if include-regexp
-              (when (string-match include-regexp (file-name-nondirectory head))
-                (add-to-list 'matched-dirs head))
-            (add-to-list 'matched-dirs head))
-          )))
-    matched-dirs))
+;; (joseph-all-files-under-dir-recursively "/tmp/ahk-mode/" "txt" "syntax" t)
+;; return all files under dir "/tmp/ahk-mode/" which filename match "txt" and
+;; file path doesnt match syntax
 
-(defun joseph-all-files-under-dir-recursively2(dir &optional include-regexp exclude-regex exclude-regex-absolute-p)
+;; (joseph-all-files-under-dir-recursively "/tmp/ahk-mode/" "txt" "syntax" )
+;; return all files under dir "/tmp/ahk-mode/" which filename match "txt" and
+;; file name doesnt match "syntax"
+
+;; (joseph-all-files-under-dir-recursively "/tmp/ahk-mode/" nil "syntax")
+;; return all files under dir "/tmp/ahk-mode/" which filename doesnt match "syntax"
+
+;; (joseph-all-files-under-dir-recursively "/tmp/ahk-mode/" nil "syntax" t)
+;; return all files under dir "/tmp/ahk-mode/" which file path doesnt match "syntax"
+
+
+;;;###autoload
+(defun joseph-all-files-under-dir-recursively
+  (dir &optional include-regexp exclude-regex exclude-regex-absolute-p)
   "return all files matched `include-regexp' under directory `dir' recursively.
 if `include-regexp' is nil ,return all. "
   (let((files (list dir))  matched-dirs head)
@@ -100,9 +98,6 @@ if `include-regexp' is nil ,return all. "
               )
           )))
     matched-dirs))
-
-
-
 
 ;; (joseph-all-subdirs-under-dir-recursively "~") will list all sub directories
 ;; under home recursively (include home directory),
