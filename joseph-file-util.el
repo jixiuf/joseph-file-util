@@ -1,17 +1,16 @@
 ;;; joseph-file-util.el --- Function library about file and directory.
 
-;; Filename: joseph-file-util.el
+;; Copyright (C) 2011~, Joseph, all rights reserved.
+;; Created: 2011-03-31
+;; Last Updated: Joseph 2011-10-09 21:14:21 星期日
+;; Version: 0.1.1
 ;; Description: Function library about file and directory.
 ;; Author: Joseph <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
-;; Copyright (C) 2011~, Joseph, all rights reserved.
-;; Created: 2011-03-31
-;; Version: 0.1.0
 ;; URL:  http://www.emacswiki.org/emacs/download/joseph-file-util.el
 ;; Main Page: https://github.com/jixiuf/joseph-file-util
 ;; Keywords:  file directory
 ;; Compatibility: (Test on GNU Emacs 24.0.50.1)
-;;
 ;;
 ;;; This file is NOT part of GNU Emacs
 
@@ -67,13 +66,13 @@
 
 ;; (joseph-all-files-under-dir-recursively "/tmp/ahk-mode/" nil "syntax" t)
 ;; return all files under dir "/tmp/ahk-mode/" which file path doesnt match "syntax"
-
-
 ;;;###autoload
 (defun joseph-all-files-under-dir-recursively
   (dir &optional include-regexp exclude-regex exclude-regex-absolute-p)
   "return all files matched `include-regexp' under directory `dir' recursively.
-if `include-regexp' is nil ,return all. "
+if `include-regexp' is nil ,return all.
+when `include-regexp-absolute-path-p' is nil or omited ,filename is used to match `include-regexp'
+when `include-regexp-absolute-path-p' is t then full file path is used to match `include-regexp' "
   (let((files (list dir))  matched-dirs head)
     (while (> (length files) 0)
       (setq head (pop files))
@@ -87,16 +86,11 @@ if `include-regexp' is nil ,return all. "
                 (if exclude-regex
                     (if (not (string-match exclude-regex (if exclude-regex-absolute-p head (file-name-nondirectory head))))
                         (add-to-list 'matched-dirs head))
-                  (add-to-list 'matched-dirs head)
-                    )
-                  )
+                  (add-to-list 'matched-dirs head)))
              (if exclude-regex
                  (if (not (string-match exclude-regex (if exclude-regex-absolute-p head (file-name-nondirectory head))))
                      (add-to-list 'matched-dirs head))
-               (add-to-list 'matched-dirs head)
-               )
-              )
-          )))
+               (add-to-list 'matched-dirs head))))))
     matched-dirs))
 
 ;; (joseph-all-subdirs-under-dir-recursively "~") will list all sub directories
@@ -158,7 +152,7 @@ the name of file is used to match the `pattern',
         ))
     tmp-files))
 
-;; (get-system-file-path "d:/.emacs.d")
+;; (get-system-file-path "d:/.emacs.d") on windows = d:\\.emacs.d
 ;;;###autoload
 (defun get-system-file-path(file-path)
   "when on windows `expand-file-name' will translate from \\ to /
