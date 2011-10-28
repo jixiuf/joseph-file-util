@@ -160,8 +160,7 @@ the name of file is used to match the `pattern',
 some times it is not needed . then this function is used to translate /
 to \\ when on windows"
   (if (equal system-type 'windows-nt)
-      (replace-regexp-in-string "/" "\\\\" (expand-file-name file-path))
+      (convert-standard-filename (expand-file-name file-path))
     (expand-file-name file-path)))
-
 
 (provide 'joseph-file-util)
