@@ -64,8 +64,8 @@
   (dir &optional include-regexp include-regexp-absolute-path-p exclude-regex exclude-regex-absolute-path-p)
   "return all files matched `include-regexp' under directory `dir' recursively.
 if `include-regexp' is nil ,return all.
-when `include-regexp-absolute-path-p' is nil or omited filename is used to match `include-regexp'
-when `include-regexp-absolute-path-p' is t  then full file path is used to match `include-regexp'
+when `include-regexp-absolute-path-p' is nil or omited ,filename is used to match `include-regexp'
+when `include-regexp-absolute-path-p' is t then full file path is used to match `include-regexp'
 "
   (let((files (list dir))  matched-dirs head)
     (while (> (length files) 0)
