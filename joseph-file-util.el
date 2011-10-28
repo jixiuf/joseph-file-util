@@ -152,4 +152,16 @@ the name of file is used to match the `pattern',
           (add-to-list 'tmp-files file))
         ))
     tmp-files))
+
+;; (get-system-file-path "d:/.emacs.d")
+;;;###autoload
+(defun get-system-file-path(file-path)
+  "when on windows `expand-file-name' will translate from \\ to /
+some times it is not needed . then this function is used to translate /
+to \\ when on windows"
+  (if (equal system-type 'windows-nt)
+      (replace-regexp-in-string "/" "\\\\" (expand-file-name file-path))
+    (expand-file-name file-path)))
+
+
 (provide 'joseph-file-util)
