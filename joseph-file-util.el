@@ -54,10 +54,19 @@
 ;; (joseph-all-files-under-dir-recursively "~")
 ;;  get all files under home recursively
 ;;
+;; (print (joseph-all-files-under-dir-recursively "d:/.emacs.d/site-lisp/" "sqlparse"  t ))
+;; (print (joseph-all-files-under-dir-recursively "d:/.emacs.d/site-lisp/" "sqlparse"   ))
+;; (print (joseph-all-files-under-dir-recursively "d:/.emacs.d/site-lisp/" "sqlparse"  t ".git" t))
+;; (print (joseph-all-files-under-dir-recursively "d:/.emacs.d/site-lisp/sqlparse/" nil  t ".git" t))
+
 ;;;###autoload
-(defun joseph-all-files-under-dir-recursively(dir &optional include-regexp)
+(defun joseph-all-files-under-dir-recursively
+  (dir &optional include-regexp include-regexp-absolute-path-p exclude-regex exclude-regex-absolute-path-p)
   "return all files matched `include-regexp' under directory `dir' recursively.
-if `include-regexp' is nil ,return all. "
+if `include-regexp' is nil ,return all.
+when `include-regexp-absolute-path-p' is nil or omited filename is used to match `include-regexp'
+when `include-regexp-absolute-path-p' is t  then full file path is used to match `include-regexp'
+"
   (let((files (list dir))  matched-dirs head)
     (while (> (length files) 0)
       (setq head (pop files))
@@ -67,40 +76,21 @@ if `include-regexp' is nil ,return all. "
               (when (not (string-match "^\\.$\\|^\\.\\.$" sub))
                 (setq files (append (list (expand-file-name sub head)) files))))
           (if include-regexp
-              (when (string-match include-regexp (file-name-nondirectory head))
-                (add-to-list 'matched-dirs head))
-            (add-to-list 'matched-dirs head))
-          )))
-    matched-dirs))
-
-(defun joseph-all-files-under-dir-recursively2(dir &optional include-regexp exclude-regex exclude-regex-absolute-p)
-  "return all files matched `include-regexp' under directory `dir' recursively.
-if `include-regexp' is nil ,return all. "
-  (let((files (list dir))  matched-dirs head)
-    (while (> (length files) 0)
-      (setq head (pop files))
-      (when (file-readable-p head)
-        (if (file-directory-p head)
-            (dolist (sub (directory-files head))
-              (when (not (string-match "^\\.$\\|^\\.\\.$" sub))
-                (setq files (append (list (expand-file-name sub head)) files))))
-           (if include-regexp
-              (if (string-match include-regexp (file-name-nondirectory head))
-                (if exclude-regex
-                    (if (not (string-match exclude-regex (if exclude-regex-absolute-p head (file-name-nondirectory head))))
-                        (add-to-list 'matched-dirs head))
-                  (add-to-list 'matched-dirs head)
+              (if (string-match include-regexp  (if include-regexp-absolute-path-p head (file-name-nondirectory head)))
+                  (if exclude-regex
+                      (if (not (string-match exclude-regex (if exclude-regex-absolute-path-p head (file-name-nondirectory head))))
+                          (add-to-list 'matched-dirs head))
+                    (add-to-list 'matched-dirs head)
                     )
-                  )
-             (if exclude-regex
-                 (if (not (string-match exclude-regex (if exclude-regex-absolute-p head (file-name-nondirectory head))))
-                     (add-to-list 'matched-dirs head))
-               (add-to-list 'matched-dirs head)
-               )
+                )
+            (if exclude-regex
+                (if (not (string-match exclude-regex (if exclude-regex-absolute-path-p head (file-name-nondirectory head))))
+                    (add-to-list 'matched-dirs head))
+              (add-to-list 'matched-dirs head)
               )
+            )
           )))
     matched-dirs))
-
 
 
 
