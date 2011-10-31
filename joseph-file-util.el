@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2011~, Joseph, all rights reserved.
 ;; Created: 2011-03-31
-;; Last Updated: Joseph 2011-10-09 21:14:21 星期日
+;; Last Updated: Joseph 2011-10-31 15:01:17 星期一
 ;; Version: 0.1.1
 ;; Description: Function library about file and directory.
 ;; Author: Joseph <jixiuf@gmail.com>
@@ -47,28 +47,31 @@
 ;; Below are customizable option list:
 ;;
 
-;; (joseph-all-files-under-dir-recursively "~/.emacs.d/" "\\.el$")
-;; get all `*.el' under directory `~/.emacs.d/' recursively.
-;;
-;; (joseph-all-files-under-dir-recursively "~")
-;;  get all files under home recursively
-;;
-;; (joseph-all-files-under-dir-recursively "/tmp/ahk-mode/" "txt" "syntax" t)
-;; return all files under dir "/tmp/ahk-mode/" which filename match "txt" and
-;; file path doesnt match syntax
+;; (print  (joseph-all-files-under-dir-recursively "~/.emacs.d/site-lisp/ahk-mode/" ))
+;; (print  (joseph-all-files-under-dir-recursively "~/.emacs.d/site-lisp/ahk-mode/" "\\.el$"))
 
-;; (joseph-all-files-under-dir-recursively "/tmp/ahk-mode/" "txt" "syntax" )
-;; return all files under dir "/tmp/ahk-mode/" which filename match "txt" and
-;; file name doesnt match "syntax"
+;; (joseph-all-files-under-dir-recursively "~/.emacs.d/site-lisp/ahk-mode/" "txt" nil )
+;; return all files under dir  "~/.emacs.d/site-lisp/ahk-mode/" which filename match "txt"
 
-;; (joseph-all-files-under-dir-recursively "/tmp/ahk-mode/" nil "syntax")
-;; return all files under dir "/tmp/ahk-mode/" which filename doesnt match "syntax"
+;; (joseph-all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" "syntax" t)
+;; return all files under dir  "~/.emacs.d/site-lisp/ahk-mode/" which full file path match "syntax"
 
-;; (joseph-all-files-under-dir-recursively "/tmp/ahk-mode/" nil "syntax" t)
-;; return all files under dir "/tmp/ahk-mode/" which file path doesnt match "syntax"
+;; (joseph-all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" "Key" nil "word" nil)
+;; (joseph-all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" "Key" nil "word" )
+;; return all files under dir  "~/.emacs.d/site-lisp/ahk-mode/" which file name match "Key" and filename doesn't match "word"
+
+;; (joseph-all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" "Key" nil "word" t)
+;; return all files under dir  "~/.emacs.d/site-lisp/ahk-mode/" which file name match "Key" and full file path doesn't match "word"
+
+;; (joseph-all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" nil nil "syntax" t)
+;; return all files under dir   "~/.emacs.d/site-lisp/ahk-mode/" which full  file path doesn't match "syntax"
+
+;; (joseph-all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" nil nil "syntax" nil)
+;; return all files under dir   "~/.emacs.d/site-lisp/ahk-mode/" which file name doesn't match "syntax"
+
 ;;;###autoload
 (defun joseph-all-files-under-dir-recursively
-  (dir &optional include-regexp exclude-regex exclude-regex-absolute-p)
+  (dir &optional include-regexp  include-regexp-absolute-path-p exclude-regex exclude-regex-absolute-p)
   "return all files matched `include-regexp' under directory `dir' recursively.
 if `include-regexp' is nil ,return all.
 when `include-regexp-absolute-path-p' is nil or omited ,filename is used to match `include-regexp'
@@ -82,7 +85,7 @@ when `include-regexp-absolute-path-p' is t then full file path is used to match 
               (when (not (string-match "^\\.$\\|^\\.\\.$" sub))
                 (setq files (append (list (expand-file-name sub head)) files))))
            (if include-regexp
-              (if (string-match include-regexp (file-name-nondirectory head))
+               (if (string-match include-regexp (if include-regexp-absolute-path-p head (file-name-nondirectory head)))
                 (if exclude-regex
                     (if (not (string-match exclude-regex (if exclude-regex-absolute-p head (file-name-nondirectory head))))
                         (add-to-list 'matched-dirs head))
