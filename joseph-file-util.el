@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2011~, Joseph, all rights reserved.
 ;; Created: 2011-03-31
-;; Last Updated: Joseph 2011-10-31 15:39:14 星期一
+;; Last Updated: Joseph 2011-10-31 15:40:48 星期一
 ;; Version: 0.1.1
 ;; Description: Function library about file and directory.
 ;; Author: Joseph <jixiuf@gmail.com>
@@ -75,7 +75,10 @@
   "return all files matched `include-regexp' under directory `dir' recursively.
 if `include-regexp' is nil ,return all.
 when `include-regexp-absolute-path-p' is nil or omited ,filename is used to match `include-regexp'
-when `include-regexp-absolute-path-p' is t then full file path is used to match `include-regexp' "
+when `include-regexp-absolute-path-p' is t then full file path is used to match `include-regexp'
+when `exclude-regexp-absolute-path-p' is nil or omited ,filename is used to match `exclude-regexp'
+when `exclude-regexp-absolute-path-p' is t then full file path is used to match `exclude-regexp'
+"
   (let((files (list dir))  matched-dirs head)
     (while (> (length files) 0)
       (setq head (pop files))
