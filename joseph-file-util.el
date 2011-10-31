@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2011~, Joseph, all rights reserved.
 ;; Created: 2011-03-31
-;; Last Updated: Joseph 2011-10-31 15:29:06 星期一
+;; Last Updated: Joseph 2011-10-31 15:39:14 星期一
 ;; Version: 0.1.1
 ;; Description: Function library about file and directory.
 ;; Author: Joseph <jixiuf@gmail.com>
@@ -85,7 +85,6 @@ when `include-regexp-absolute-path-p' is t then full file path is used to match 
               (when  (not (string-match "^\\.$\\|^\\.\\.$" sub))
                 (when (or (not exclude-regex)
                           (and exclude-regex exclude-regex-absolute-p  (not (string-match  exclude-regex  (expand-file-name sub head)))))
-                  (message  (expand-file-name sub head))
                   (setq files (append (list (expand-file-name sub head)) files)))))
           (if include-regexp
               (if (string-match include-regexp (if include-regexp-absolute-path-p head (file-name-nondirectory head)))
