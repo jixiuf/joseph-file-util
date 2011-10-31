@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2011~, Joseph, all rights reserved.
 ;; Created: 2011-03-31
-;; Last Updated: Joseph 2011-10-31 16:09:33 星期一
+;; Last Updated: Joseph 2011-10-31 16:20:14 星期一
 ;; Version: 0.1.2
 ;; Description: Function library about file and directory.
 ;; Author: Joseph <jixiuf@gmail.com>
@@ -164,12 +164,8 @@ the name of file is used to match the `pattern',
  if not , only the absolute path of file is used."
   (let ((tmp-files))
     (dolist (file files)
-      (if absolute-path-p
-          (unless (string-match pattern file)
-            (add-to-list 'tmp-files file))
-        (unless (string-match pattern (file-name-nondirectory file))
-          (add-to-list 'tmp-files file))
-        ))
+      (unless (string-match pattern  (if absolute-path-p file (file-name-nondirectory file)))
+        (add-to-list 'tmp-files file)))
     tmp-files))
 
 ;; (get-system-file-path "d:/.emacs.d") on windows = d:\\.emacs.d
