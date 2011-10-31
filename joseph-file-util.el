@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2011~, Joseph, all rights reserved.
 ;; Created: 2011-03-31
-;; Last Updated: Joseph 2011-10-31 16:20:14 星期一
+;; Last Updated: Joseph 2011-10-31 16:39:08 星期一
 ;; Version: 0.1.2
 ;; Description: Function library about file and directory.
 ;; Author: Joseph <jixiuf@gmail.com>
@@ -142,7 +142,7 @@ when `exclude-regexp-absolute-path-p' is t then full file path is used to match 
 ;;;###autoload
 (defun joseph-all-subdirs-under-dir-without-borring-dirs(dir)
   "return all sub directories under `dir' exclude those borring directory."
-  (joseph-all-subdirs-under-dir-recursively dir nil nil  "\\.git\\|\\.svn\\|RCS\\|rcs\\|CVS\\|cvs" t))
+  (all-subdir-under-dir-recursively dir nil nil  "\\.git\\|\\.svn\\|RCS\\|rcs\\|CVS\\|cvs" t))
 
 
 ;; for example :
