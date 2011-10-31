@@ -2,8 +2,8 @@
 
 ;; Copyright (C) 2011~, Joseph, all rights reserved.
 ;; Created: 2011-03-31
-;; Last Updated: Joseph 2011-10-31 15:40:48 星期一
-;; Version: 0.1.1
+;; Last Updated: Joseph 2011-10-31 16:09:33 星期一
+;; Version: 0.1.2
 ;; Description: Function library about file and directory.
 ;; Author: Joseph <jixiuf@gmail.com>
 ;; Maintainer: Joseph <jixiuf@gmail.com>
@@ -47,30 +47,30 @@
 ;; Below are customizable option list:
 ;;
 
-;; (print  (joseph-all-files-under-dir-recursively "~/.emacs.d/site-lisp/ahk-mode/" ))
-;; (print  (joseph-all-files-under-dir-recursively "~/.emacs.d/site-lisp/ahk-mode/" "\\.el$"))
+;; (print  (all-files-under-dir-recursively "~/.emacs.d/site-lisp/ahk-mode/" ))
+;; (print  (all-files-under-dir-recursively "~/.emacs.d/site-lisp/ahk-mode/" "\\.el$"))
 
-;; (joseph-all-files-under-dir-recursively "~/.emacs.d/site-lisp/ahk-mode/" "txt" nil )
+;; (all-files-under-dir-recursively "~/.emacs.d/site-lisp/ahk-mode/" "txt" nil )
 ;; return all files under dir  "~/.emacs.d/site-lisp/ahk-mode/" which filename match "txt"
 
-;; (joseph-all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" "syntax" t)
+;; (all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" "syntax" t)
 ;; return all files under dir  "~/.emacs.d/site-lisp/ahk-mode/" which full file path match "syntax"
 
-;; (joseph-all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" "Key" nil "word" nil)
-;; (joseph-all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" "Key" nil "word" )
+;; (all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" "Key" nil "word" nil)
+;; (all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" "Key" nil "word" )
 ;; return all files under dir  "~/.emacs.d/site-lisp/ahk-mode/" which file name match "Key" and filename doesn't match "word"
 
-;; (joseph-all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" "Key" nil "word" t)
+;; (all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" "Key" nil "word" t)
 ;; return all files under dir  "~/.emacs.d/site-lisp/ahk-mode/" which file name match "Key" and full file path doesn't match "word"
 
-;; (joseph-all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" nil nil "syntax" t)
+;; (all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" nil nil "syntax" t)
 ;; return all files under dir   "~/.emacs.d/site-lisp/ahk-mode/" which full  file path doesn't match "syntax"
 
-;; (joseph-all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" nil nil "syntax" nil)
+;; (all-files-under-dir-recursively   "~/.emacs.d/site-lisp/ahk-mode/" nil nil "syntax" nil)
 ;; return all files under dir   "~/.emacs.d/site-lisp/ahk-mode/" which file name doesn't match "syntax"
 
 ;;;###autoload
-(defun joseph-all-files-under-dir-recursively
+(defun all-files-under-dir-recursively
   (dir &optional include-regexp  include-regexp-absolute-path-p exclude-regex exclude-regex-absolute-p)
   "return all files matched `include-regexp' under directory `dir' recursively.
 if `include-regexp' is nil ,return all.
@@ -79,7 +79,7 @@ when `include-regexp-absolute-path-p' is t then full file path is used to match 
 when `exclude-regexp-absolute-path-p' is nil or omited ,filename is used to match `exclude-regexp'
 when `exclude-regexp-absolute-path-p' is t then full file path is used to match `exclude-regexp'
 "
-  (let((files (list dir))  matched-dirs head)
+  (let((files (list dir))  matched-files head)
     (while (> (length files) 0)
       (setq head (pop files))
       (when (file-readable-p head)
@@ -87,8 +87,45 @@ when `exclude-regexp-absolute-path-p' is t then full file path is used to match 
             (dolist (sub (directory-files head))
               (when  (not (string-match "^\\.$\\|^\\.\\.$" sub))
                 (when (or (not exclude-regex)
+                          (and exclude-regex (not exclude-regex-absolute-p))
                           (and exclude-regex exclude-regex-absolute-p  (not (string-match  exclude-regex  (expand-file-name sub head)))))
                   (setq files (append (list (expand-file-name sub head)) files)))))
+          (if include-regexp
+              (if (string-match include-regexp (if include-regexp-absolute-path-p head (file-name-nondirectory head)))
+                  (if exclude-regex
+                      (if (not (string-match exclude-regex (if exclude-regex-absolute-p head (file-name-nondirectory head))))
+                          (add-to-list 'matched-files head))
+                    (add-to-list 'matched-files head)))
+            (if exclude-regex
+                (if (not (string-match exclude-regex (if exclude-regex-absolute-p head (file-name-nondirectory head))))
+                    (add-to-list 'matched-files head))
+              (add-to-list 'matched-files head))))))
+    matched-files))
+
+;; ( all-subdir-under-dir-recursively "~/.emacs.d") will list all sub directories
+;; under"~/.emacs.d" recursively (include "~/.emacs.d" directory),
+;; ( all-subdir-under-dir-recursively "~/.emacs.d/site-lisp/" nil nil "\\.git\\|\\.svn" t)
+;; will list all sub directories under home recursively ,exclude `.git' and `.svn'
+;; directories.
+(defun all-subdir-under-dir-recursively
+  (dir &optional include-regexp  include-regexp-absolute-path-p exclude-regex exclude-regex-absolute-p)
+  "return all files matched `include-regexp' under directory `dir' recursively.
+if `include-regexp' is nil ,return all.
+when `include-regexp-absolute-path-p' is nil or omited ,filename is used to match `include-regexp'
+when `include-regexp-absolute-path-p' is t then full file path is used to match `include-regexp'
+when `exclude-regexp-absolute-path-p' is nil or omited ,filename is used to match `exclude-regexp'
+when `exclude-regexp-absolute-path-p' is t then full file path is used to match `exclude-regexp'"
+  (let((files (list dir))  matched-dirs head)
+    (while (> (length files) 0)
+      (setq head (pop files))
+      (when (file-readable-p head)
+        (when (file-directory-p head)
+          (dolist (sub (directory-files head))
+            (when  (not (string-match "^\\.$\\|^\\.\\.$" sub))
+              (when (or (not exclude-regex)
+                        (and exclude-regex (not exclude-regex-absolute-p))
+                        (and exclude-regex exclude-regex-absolute-p  (not (string-match  exclude-regex  (expand-file-name sub head)))))
+                (setq files (append (list (expand-file-name sub head)) files)))))
           (if include-regexp
               (if (string-match include-regexp (if include-regexp-absolute-path-p head (file-name-nondirectory head)))
                   (if exclude-regex
@@ -101,36 +138,11 @@ when `exclude-regexp-absolute-path-p' is t then full file path is used to match 
               (add-to-list 'matched-dirs head))))))
     matched-dirs))
 
-;; (joseph-all-subdirs-under-dir-recursively "~") will list all sub directories
-;; under home recursively (include home directory),
-;; (joseph-all-subdirs-under-dir-recursively "~" "\\.git\\|\\.svn")
-;; will list all sub directories under home recursively ,exclude `.git' and `.svn'
-;; directories.
-
-;;;###autoload
-(defun joseph-all-subdirs-under-dir-recursively(dir &optional exclude-regex)
-  "return all sub directorys under `dir', exclude those name match `exclude-regex'"
-  (let((files (list dir))  matched-dirs head)
-    (while (> (length files) 0)
-      (setq head (pop files))
-      (when (and (file-readable-p head)
-                 (file-directory-p head))
-        (add-to-list 'matched-dirs head)
-        (dolist (dir (directory-files head ))
-          (if (and (file-readable-p (expand-file-name dir head))
-                   (file-directory-p (expand-file-name dir head))
-                   (not (string-match "^\\.$\\|^\\.\\.$" dir))
-                   (if exclude-regex (not (string-match exclude-regex dir)) t))
-              (setq files (append (list (expand-file-name dir head)) files))
-            ))))
-    matched-dirs))
-
-
 
 ;;;###autoload
 (defun joseph-all-subdirs-under-dir-without-borring-dirs(dir)
   "return all sub directories under `dir' exclude those borring directory."
-  (joseph-all-subdirs-under-dir-recursively dir "\\.git\\|\\.svn\\|RCS\\|rcs\\|CVS\\|cvs"))
+  (joseph-all-subdirs-under-dir-recursively dir nil nil  "\\.git\\|\\.svn\\|RCS\\|rcs\\|CVS\\|cvs" t))
 
 
 ;; for example :
